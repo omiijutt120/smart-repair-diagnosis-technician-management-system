@@ -1,0 +1,18 @@
+# Free academic demo. Files and SQLite records are ephemeral on this plan.
+services:
+  - type: web
+    name: smart-repair-demo
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python render_start.py
+    healthCheckPath: /auth/login
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: SESSION_COOKIE_SECURE
+        value: "true"
+      - key: SEED_DEMO
+        value: "true"
+      - key: PYTHONUNBUFFERED
+        value: "1"
