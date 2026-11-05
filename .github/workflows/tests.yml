@@ -11,8 +11,8 @@ permissions:
 
 jobs:
   test:
-    name: Python 3.12 / Linux
-    runs-on: ubuntu-latest
+    name: Python 3.12 / Ubuntu 24.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - name: Check out source

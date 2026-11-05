@@ -2,6 +2,8 @@
 
 **A connected repair-management application built with Flask, SQLAlchemy and Jinja2.**
 
+[![Tests](https://github.com/omiijutt120/smart-repair-diagnosis-technician-management-system/actions/workflows/tests.yml/badge.svg)](https://github.com/omiijutt120/smart-repair-diagnosis-technician-management-system/actions/workflows/tests.yml)
+
 Smart Repair brings customer intake, symptom-based diagnosis, workshop scheduling, technician assignments, spare-parts inventory and billing into one workflow. It is designed as an academic Web Engineering project with **40 related domain models**, three role-based workspaces and a reproducible demonstration dataset.
 
 [Getting started](#getting-started) · [Features](#features) · [Screenshots](#screenshots) · [Database design](#database-design) · [Render deployment](#render-deployment) · [Documentation](#documentation)
@@ -97,6 +99,11 @@ Browse the [complete screenshot collection](docs/screenshots/), including invent
 - Node.js and Microsoft Edge only if running the optional browser checks.
 
 Run all commands from the project root, where `app.py` is located.
+
+```bash
+git clone https://github.com/omiijutt120/smart-repair-diagnosis-technician-management-system.git
+cd smart-repair-diagnosis-technician-management-system
+```
 
 ### Windows
 
