@@ -1223,15 +1223,80 @@ select.input,
   transform-style: preserve-3d;
 }
 
+.landing-visual:has(.repair-workstation-hero) {
+  isolation: isolate;
+  overflow: hidden;
+  padding: 28px;
+  border: 1px solid rgba(168, 255, 53, 0.16);
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at 62% 48%, rgba(69, 96, 39, 0.38), transparent 45%),
+    linear-gradient(145deg, rgba(22, 30, 25, 0.9), rgba(8, 12, 13, 0.32) 58%, rgba(8, 10, 12, 0.72));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.055),
+    inset 0 -80px 100px rgba(0, 0, 0, 0.36),
+    0 28px 80px rgba(0, 0, 0, 0.3);
+}
+
+.landing-visual:has(.repair-workstation-hero)::before {
+  content: "";
+  position: absolute;
+  z-index: 3;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  background:
+    linear-gradient(90deg, rgba(8, 10, 12, 0.94), transparent 14%, transparent 82%, rgba(8, 10, 12, 0.72)),
+    linear-gradient(0deg, rgba(8, 10, 12, 0.88), transparent 22%, transparent 78%, rgba(8, 10, 12, 0.42));
+  box-shadow: inset 0 0 75px 18px rgba(4, 7, 8, 0.42);
+}
+
+.repair-workstation-hero {
+  position: relative;
+  z-index: 2;
+}
+
+.repair-workstation-hero img {
+  opacity: 0.92;
+  -webkit-mask-image: radial-gradient(ellipse 78% 74% at 54% 52%, #000 48%, rgba(0, 0, 0, 0.92) 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 78% 74% at 54% 52%, #000 48%, rgba(0, 0, 0, 0.92) 62%, transparent 100%);
+}
+
+.landing-visual .floating-card,
+.landing-visual .visual-caption {
+  z-index: 5;
+}
+
 .landing-visual::after {
   content: "";
   position: absolute;
+  z-index: 1;
   inset: 7% 5%;
   pointer-events: none;
   border-radius: 50%;
   background: radial-gradient(circle, rgba(168, 255, 53, 0.14), transparent 67%);
   transform: translate3d(0, calc(var(--page-parallax, 0px) * -0.18), -1px);
   animation: repair-pulse 4.8s ease-in-out infinite;
+}
+
+.repair-workstation-art img {
+  opacity: 0.76;
+  -webkit-mask-image: radial-gradient(ellipse 84% 86% at 62% 55%, #000 42%, rgba(0, 0, 0, 0.9) 62%, transparent 100%);
+  mask-image: radial-gradient(ellipse 84% 86% at 62% 55%, #000 42%, rgba(0, 0, 0, 0.9) 62%, transparent 100%);
+}
+
+.repair-auth-art {
+  overflow: hidden;
+  border: 1px solid rgba(168, 255, 53, 0.13);
+  border-radius: 26px;
+  background: radial-gradient(circle at 58% 48%, rgba(168, 255, 53, 0.13), rgba(8, 12, 13, 0.46) 68%);
+  box-shadow: inset 0 0 55px rgba(0, 0, 0, 0.35), 0 22px 50px rgba(0, 0, 0, 0.28);
+}
+
+.repair-auth-art img {
+  opacity: 0.8;
+  -webkit-mask-image: radial-gradient(ellipse 82% 82% at 54% 52%, #000 46%, transparent 100%);
+  mask-image: radial-gradient(ellipse 82% 82% at 54% 52%, #000 46%, transparent 100%);
 }
 
 .welcome-banner::after {
@@ -1436,6 +1501,10 @@ select.input,
   .filter-bar .search-input { grid-column: 1 / -1; }
   .table-scroll table { min-width: 760px; }
   .footer { padding: 18px; }
+  .landing-visual:has(.repair-workstation-hero) {
+    padding: 14px;
+    border-radius: 22px;
+  }
   .motion-3d { will-change: auto; }
   .repair-workstation-hero img,
   .repair-workstation-art img { transform: none; animation: none; }
