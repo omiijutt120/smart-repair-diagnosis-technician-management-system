@@ -166,6 +166,23 @@ document.addEventListener("DOMContentLoaded", () => {
   scrollMeter.className = "scroll-meter";
   scrollMeter.setAttribute("aria-hidden", "true");
   document.body.append(scrollMeter);
+  const cursorLight = document.createElement("div");
+  cursorLight.className = "cursor-light";
+  cursorLight.setAttribute("aria-hidden", "true");
+  document.body.append(cursorLight);
+  let cursorFrame = 0;
+  document.addEventListener("pointermove", (event) => {
+    if (!precisePointer.matches || !spaciousViewport.matches || reducedMotion.matches) return;
+    if (cursorFrame) cancelAnimationFrame(cursorFrame);
+    cursorFrame = requestAnimationFrame(() => {
+      cursorLight.style.setProperty("--cursor-x", `${event.clientX}px`);
+      cursorLight.style.setProperty("--cursor-y", `${event.clientY}px`);
+      cursorLight.classList.add("is-active");
+    });
+  });
+  document.documentElement.addEventListener("mouseleave", () => {
+    cursorLight.classList.remove("is-active");
+  });
 
   let motionFrame = 0;
   const updateScrollMotion = () => {
@@ -176,7 +193,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (reducedMotion.matches) return;
     document.documentElement.style.setProperty(
       "--page-parallax",
-      `${Math.min(window.scrollY * 0.075, 64).toFixed(2)}px`,
+      `${Math.min(window.scrollY * 0.12, 96).toFixed(2)}px`,
     );
   };
   const requestScrollMotion = () => {
