@@ -106,7 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   const revealItems = document.querySelectorAll(
-    ".page-heading, .welcome-banner, .metric-card, .panel, .resource-card",
+    ".page-heading, .welcome-banner, .metric-card, .panel, .resource-card, " +
+      ".device-card, .landing-hero > div, .device-strip, .how-section, " +
+      ".steps-grid > article, .landing-cta, .auth-layout",
   );
   revealItems.forEach((item, index) => {
     item.dataset.reveal = "";
@@ -155,5 +157,85 @@ document.addEventListener("DOMContentLoaded", () => {
     ripple.style.top = `${event.clientY - bounds.top}px`;
     button.append(ripple);
     ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
+  });
+
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+  const precisePointer = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const spaciousViewport = window.matchMedia("(min-width: 821px)");
+  const scrollMeter = document.createElement("div");
+  scrollMeter.className = "scroll-meter";
+  scrollMeter.setAttribute("aria-hidden", "true");
+  document.body.append(scrollMeter);
+
+  let motionFrame = 0;
+  const updateScrollMotion = () => {
+    motionFrame = 0;
+    const scrollRange = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = scrollRange > 0 ? window.scrollY / scrollRange : 0;
+    scrollMeter.style.setProperty("--scroll-progress", String(Math.min(progress, 1)));
+    if (reducedMotion.matches) return;
+    document.documentElement.style.setProperty(
+      "--page-parallax",
+      `${Math.min(window.scrollY * 0.075, 64).toFixed(2)}px`,
+    );
+  };
+  const requestScrollMotion = () => {
+    if (!motionFrame) motionFrame = requestAnimationFrame(updateScrollMotion);
+  };
+  window.addEventListener("scroll", requestScrollMotion, { passive: true });
+  window.addEventListener("resize", requestScrollMotion, { passive: true });
+  updateScrollMotion();
+
+  const tiltTargets = document.querySelectorAll(
+    ".metric-card, .device-card, .resource-card, .steps-grid > article, " +
+      ".visual-symptom-option, .landing-visual, .welcome-banner",
+  );
+  tiltTargets.forEach((target) => {
+    target.classList.add("motion-3d");
+    let tiltFrame = 0;
+    const resetTilt = () => {
+      if (tiltFrame) cancelAnimationFrame(tiltFrame);
+      target.style.removeProperty("transform");
+      target.style.removeProperty("--pointer-x");
+      target.style.removeProperty("--pointer-y");
+      target.classList.remove("is-tilting");
+    };
+    target.addEventListener("pointermove", (event) => {
+      if (
+        !precisePointer.matches ||
+        !spaciousViewport.matches ||
+        reducedMotion.matches
+      ) return;
+      const bounds = target.getBoundingClientRect();
+      const x = (event.clientX - bounds.left) / bounds.width;
+      const y = (event.clientY - bounds.top) / bounds.height;
+      if (tiltFrame) cancelAnimationFrame(tiltFrame);
+      tiltFrame = requestAnimationFrame(() => {
+        target.classList.add("is-tilting");
+        target.style.setProperty("--pointer-x", `${(x * 100).toFixed(1)}%`);
+        target.style.setProperty("--pointer-y", `${(y * 100).toFixed(1)}%`);
+        target.style.transform = `perspective(950px) rotateX(${((0.5 - y) * 5).toFixed(2)}deg) rotateY(${((x - 0.5) * 6).toFixed(2)}deg) translateY(-3px)`;
+      });
+    });
+    target.addEventListener("pointerleave", resetTilt);
+    target.addEventListener("pointercancel", resetTilt);
+  });
+
+  reducedMotion.addEventListener("change", () => {
+    if (reducedMotion.matches) {
+      document.documentElement.style.setProperty("--page-parallax", "0px");
+      tiltTargets.forEach((target) => {
+        target.style.removeProperty("transform");
+        target.classList.remove("is-tilting");
+      });
+    }
+  });
+  spaciousViewport.addEventListener("change", (event) => {
+    if (!event.matches) {
+      tiltTargets.forEach((target) => {
+        target.style.removeProperty("transform");
+        target.classList.remove("is-tilting");
+      });
+    }
   });
 });
