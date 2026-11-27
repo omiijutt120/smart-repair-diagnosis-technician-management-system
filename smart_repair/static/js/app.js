@@ -205,7 +205,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const tiltTargets = document.querySelectorAll(
     ".metric-card, .device-card, .resource-card, .steps-grid > article, " +
-      ".visual-symptom-option, .landing-visual, .welcome-banner",
+      ".visual-symptom-option, .landing-visual",
   );
   tiltTargets.forEach((target) => {
     target.classList.add("motion-3d");

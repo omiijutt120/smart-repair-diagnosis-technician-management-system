@@ -575,6 +575,9 @@ select.input,
 
 /* Dashboard */
 .welcome-banner {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   min-height: 225px;
   margin-bottom: 22px;
   padding: 34px 38px;
@@ -588,7 +591,7 @@ select.input,
 
 .welcome-banner h2 {
   max-width: 620px;
-  font-size: clamp(24px, 2.7vw, 36px);
+  font-size: clamp(24px, 2.25vw, 30px);
   letter-spacing: -1.4px;
 }
 
@@ -611,29 +614,33 @@ select.input,
 }
 
 .repair-workstation-art {
-  width: clamp(360px, 38vw, 570px);
-  height: 235px;
-  margin: -15px -18px -15px 15px;
+  position: absolute;
+  z-index: 0;
+  top: 0;
+  right: 0;
+  width: 62%;
+  height: 100%;
+  margin: 0;
   transform: none;
   isolation: isolate;
 }
 
 .repair-workstation-art::before {
-  content: "";
-  position: absolute;
-  inset: 8% 7% 6% 10%;
-  z-index: -1;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(168, 255, 53, 0.16), transparent 67%);
-  filter: blur(10px);
+  display: none;
 }
 
 .repair-workstation-art img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  object-position: center;
-  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.38));
+  object-fit: cover;
+  object-position: 54% 52%;
+  filter: saturate(0.72) brightness(0.68) contrast(0.92);
+}
+
+.welcome-banner > div:first-child {
+  position: relative;
+  z-index: 2;
+  width: min(58%, 650px);
 }
 
 .metric-grid {
@@ -1210,8 +1217,7 @@ select.input,
   box-shadow: 0 34px 75px rgba(13, 24, 34, 0.28);
 }
 
-.repair-workstation-hero img,
-.repair-workstation-art img {
+.repair-workstation-hero img {
   transform-origin: 55% 62%;
   animation: workstation-float 5.5s ease-in-out infinite;
   transition: filter 400ms ease;
@@ -1284,15 +1290,11 @@ select.input,
 }
 
 .repair-workstation-art img {
-  opacity: 0.76;
-  -webkit-mask-image:
-    linear-gradient(90deg, transparent 0%, #000 24%, #000 70%, transparent 100%),
-    linear-gradient(180deg, transparent 0%, #000 16%, #000 70%, transparent 100%);
-  -webkit-mask-composite: source-in;
-  mask-image:
-    linear-gradient(90deg, transparent 0%, #000 24%, #000 70%, transparent 100%),
-    linear-gradient(180deg, transparent 0%, #000 16%, #000 70%, transparent 100%);
-  mask-composite: intersect;
+  opacity: 0.4;
+  transform: none;
+  animation: none;
+  -webkit-mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.2) 18%, #000 48%, #000 100%);
+  mask-image: linear-gradient(90deg, transparent 0%, rgba(0, 0, 0, 0.2) 18%, #000 48%, #000 100%);
 }
 
 .repair-auth-art {
@@ -1316,14 +1318,7 @@ select.input,
 }
 
 .welcome-banner::after {
-  content: "";
-  position: absolute;
-  z-index: 0;
-  inset: -70% 56% -70% -22%;
-  pointer-events: none;
-  background: linear-gradient(105deg, transparent 35%, rgba(168, 255, 53, 0.08) 50%, transparent 65%);
-  transform: translateX(-65%) skewX(-12deg);
-  animation: repair-scan 6.5s ease-in-out infinite;
+  display: none;
 }
 
 .welcome-banner::before {
@@ -1335,7 +1330,7 @@ select.input,
   right: -7%;
   bottom: -78%;
   pointer-events: none;
-  opacity: 0.28;
+  opacity: 0.1;
   background-image:
     linear-gradient(rgba(168, 255, 53, 0.27) 1px, transparent 1px),
     linear-gradient(90deg, rgba(168, 255, 53, 0.27) 1px, transparent 1px);
@@ -1343,12 +1338,17 @@ select.input,
   transform: perspective(430px) rotateX(62deg) rotateZ(-8deg);
   transform-origin: center top;
   mask-image: linear-gradient(to bottom, #000, transparent 78%);
-  animation: grid-drift 7s linear infinite;
+  animation: none;
 }
 
 .welcome-banner > * {
   position: relative;
   z-index: 1;
+}
+
+.welcome-banner > .repair-workstation-art {
+  position: absolute;
+  z-index: 0;
 }
 
 .floating-card,
@@ -1472,8 +1472,8 @@ select.input,
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .repair-aside { position: static; }
   .repair-workstation-art {
-    width: 390px;
-    opacity: 0.78;
+    width: 62%;
+    opacity: 1;
   }
 }
 
