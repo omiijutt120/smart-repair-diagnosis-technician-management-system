@@ -95,6 +95,9 @@ document.addEventListener("DOMContentLoaded", () => {
       else window.location.assign("/");
     }),
   );
+  document.querySelectorAll("[data-auto-submit]").forEach((field) =>
+    field.addEventListener("change", () => field.form?.requestSubmit()),
+  );
   const deviceChoice = document.querySelector('select[name="device_id"]');
   const customDevice = document.querySelector("[data-custom-device]");
   if (deviceChoice && customDevice) {

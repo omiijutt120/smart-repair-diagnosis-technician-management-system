@@ -90,6 +90,29 @@ def repairs():
         technicians=TechnicianProfile.query.filter_by(archived_at=None).all() if current_user.has_role("Admin") else [])
 
 
+@bp.get("/billing")
+@login_required
+def billing():
+    if current_user.has_role("Admin"):
+        query = Invoice.query.filter(Invoice.archived_at.is_(None))
+    elif current_user.has_role("Customer") and current_user.customer:
+        query = (Invoice.query.join(RepairJob).join(RepairRequest)
+            .filter(RepairRequest.customer_id == current_user.customer.id, Invoice.archived_at.is_(None)))
+    else:
+        abort(403)
+    status = request.args.get("status", "").strip()
+    if status in {"Unpaid", "Partially Paid", "Paid", "Void"}:
+        query = query.filter(Invoice.status == status)
+    invoices = query.order_by(Invoice.issued_at.desc()).all()
+    active = [invoice for invoice in invoices if invoice.status != "Void"]
+    payments = (Payment.query.join(Invoice).filter(Invoice.id.in_([invoice.id for invoice in invoices]),
+        Payment.status == "Completed").order_by(Payment.paid_at.desc()).limit(10).all()) if invoices else []
+    return render_template("billing.html", invoices=invoices, payments=payments, title="Billing & payments",
+        total_billed=sum((invoice.total_amount for invoice in active), 0),
+        total_received=sum((invoice.paid for invoice in active), 0),
+        balance_due=sum((invoice.balance for invoice in active), 0), status=status)
+
+
 @bp.route("/profile", methods=["GET", "POST"])
 @login_required
 def profile():

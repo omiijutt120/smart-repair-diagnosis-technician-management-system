@@ -191,7 +191,7 @@ def payment(id):
         (request.form.get("reference", "").strip() or None))
     db.session.commit()
     flash("Payment recorded.", "success")
-    return redirect(url_for("customer.invoice", id=id))
+    return redirect(url_for("main.billing") if request.form.get("return_to") == "billing" else url_for("customer.invoice", id=id))
 
 
 @bp.get("/<resource>")
