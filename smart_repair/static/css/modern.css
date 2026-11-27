@@ -610,8 +610,30 @@ select.input,
   transform: scale(1.14);
 }
 
-.art-chip {
-  box-shadow: 0 0 0 13px rgba(168, 255, 53, 0.06), 0 20px 50px rgba(0, 0, 0, 0.25);
+.repair-workstation-art {
+  width: clamp(360px, 38vw, 570px);
+  height: 235px;
+  margin: -15px -18px -15px 15px;
+  transform: none;
+  isolation: isolate;
+}
+
+.repair-workstation-art::before {
+  content: "";
+  position: absolute;
+  inset: 8% 7% 6% 10%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(168, 255, 53, 0.16), transparent 67%);
+  filter: blur(10px);
+}
+
+.repair-workstation-art img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.38));
 }
 
 .metric-grid {
@@ -1127,6 +1149,40 @@ select.input,
     #fff;
 }
 
+.repair-workstation-hero {
+  width: min(590px, 100%);
+  transform: none;
+  filter: drop-shadow(0 24px 35px rgba(0, 0, 0, 0.48));
+}
+
+.repair-workstation-hero img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.landing-visual:has(.repair-workstation-hero) {
+  min-height: 440px;
+}
+
+.repair-auth-art {
+  width: 440px;
+  height: 248px;
+  right: -65px;
+  bottom: -38px;
+  color: inherit;
+  transform: rotate(-3deg);
+  opacity: 0.58;
+  filter: saturate(0.85) drop-shadow(0 20px 35px rgba(0, 0, 0, 0.38));
+}
+
+.repair-auth-art img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 /* Responsive */
 @media (max-width: 1120px) {
   :root { --sidebar: 238px; }
@@ -1134,6 +1190,10 @@ select.input,
   .page-heading { min-height: 140px; }
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .repair-aside { position: static; }
+  .repair-workstation-art {
+    width: 390px;
+    opacity: 0.78;
+  }
 }
 
 @media (max-width: 820px) {
@@ -1155,6 +1215,18 @@ select.input,
   }
   .page-heading h1 { font-size: 31px; letter-spacing: -1.4px; }
   .welcome-banner { padding: 28px 23px; border-radius: 19px; }
+  .repair-workstation-art {
+    position: absolute;
+    right: -75px;
+    bottom: -8px;
+    width: 390px;
+    height: 210px;
+    margin: 0;
+    opacity: 0.28;
+  }
+  .repair-workstation-art .floating-tag {
+    display: none;
+  }
   .metric-grid { grid-template-columns: 1fr 1fr; }
   .metric-card { min-height: 150px; padding: 19px; }
   .dashboard-grid,
@@ -1181,6 +1253,9 @@ select.input,
   .page-heading .btn { width: 100%; }
   .signout-button span { display: inline; }
   .visual-symptom-grid { grid-template-columns: 1fr; }
+  .repair-workstation-hero {
+    width: 100%;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
