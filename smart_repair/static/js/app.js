@@ -3,19 +3,76 @@ document.documentElement.classList.add("js-ready");
 document.addEventListener("DOMContentLoaded", () => {
   document.body.classList.add("ui-loaded");
   const toggle = document.querySelector("[data-menu-toggle]");
+  const desktopMenu = window.matchMedia("(min-width: 821px)");
+  const setToggleState = (expanded) => {
+    toggle?.setAttribute("aria-expanded", String(expanded));
+    toggle?.setAttribute(
+      "aria-label",
+      expanded ? "Collapse navigation" : "Expand navigation",
+    );
+    toggle?.setAttribute(
+      "title",
+      expanded ? "Collapse sidebar" : "Expand sidebar",
+    );
+  };
+  const savedSidebarState = (() => {
+    try {
+      return window.localStorage.getItem("smart-repair-sidebar");
+    } catch {
+      return null;
+    }
+  })();
+  if (desktopMenu.matches && savedSidebarState === "collapsed") {
+    document.body.classList.add("sidebar-collapsed");
+  }
+  setToggleState(
+    desktopMenu.matches
+      ? !document.body.classList.contains("sidebar-collapsed")
+      : false,
+  );
   const closeMenu = () => {
     document.body.classList.remove("menu-open");
-    toggle?.setAttribute("aria-expanded", "false");
+    if (!desktopMenu.matches) setToggleState(false);
   };
   toggle?.addEventListener("click", () => {
+    if (desktopMenu.matches) {
+      const collapsed = document.body.classList.toggle("sidebar-collapsed");
+      setToggleState(!collapsed);
+      try {
+        window.localStorage.setItem(
+          "smart-repair-sidebar",
+          collapsed ? "collapsed" : "expanded",
+        );
+      } catch {
+        // Storage can be unavailable in a private browsing context.
+      }
+      return;
+    }
     const open = document.body.classList.toggle("menu-open");
-    toggle.setAttribute("aria-expanded", String(open));
+    setToggleState(open);
   });
   document
     .querySelector("[data-menu-close]")
     ?.addEventListener("click", closeMenu);
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape") closeMenu();
+  });
+  desktopMenu.addEventListener("change", (event) => {
+    document.body.classList.remove("menu-open");
+    if (event.matches) {
+      let collapsed = false;
+      try {
+        collapsed =
+          window.localStorage.getItem("smart-repair-sidebar") === "collapsed";
+      } catch {
+        collapsed = false;
+      }
+      document.body.classList.toggle("sidebar-collapsed", collapsed);
+      setToggleState(!collapsed);
+    } else {
+      document.body.classList.remove("sidebar-collapsed");
+      setToggleState(false);
+    }
   });
   document
     .querySelectorAll("[data-dismiss]")

@@ -214,6 +214,116 @@ h3 {
   box-shadow: 0 8px 30px rgba(18, 27, 38, 0.035);
 }
 
+.mobile-toggle {
+  display: inline-flex;
+  width: 39px;
+  height: 39px;
+  margin-right: 10px;
+  border: 1px solid #dce3e8;
+  border-radius: 11px;
+  color: #344051;
+  background: white;
+  box-shadow: 0 5px 16px rgba(18, 27, 38, 0.07);
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
+}
+
+.mobile-toggle:hover {
+  color: #25330f;
+  background: #eff9df;
+  transform: scale(1.04);
+}
+
+.sidebar,
+.main-shell {
+  transition: width 220ms ease, margin-left 220ms ease, padding 220ms ease, transform 220ms ease;
+}
+
+@media (min-width: 821px) {
+  body.sidebar-collapsed {
+    --sidebar: 88px;
+  }
+
+  .sidebar-collapsed .sidebar {
+    padding-inline: 13px;
+  }
+
+  .sidebar-collapsed .sidebar::before {
+    opacity: 0;
+  }
+
+  .sidebar-collapsed .sidebar > .brand {
+    justify-content: center;
+    margin-left: 0;
+  }
+
+  .sidebar-collapsed .sidebar > .brand > span:last-child,
+  .sidebar-collapsed .workspace-label,
+  .sidebar-collapsed .nav-label,
+  .sidebar-collapsed .nav-item > span:not(.count),
+  .sidebar-collapsed .tiny-tag,
+  .sidebar-collapsed .sidebar-card,
+  .sidebar-collapsed .user-card > div,
+  .sidebar-collapsed .signout-button span {
+    display: none;
+  }
+
+  .sidebar-collapsed .sidebar nav {
+    margin-top: 30px;
+  }
+
+  .sidebar-collapsed .nav-label.second {
+    display: block;
+    height: 1px;
+    margin: 20px 8px 12px;
+    padding: 0;
+    overflow: hidden;
+    background: rgba(255, 255, 255, 0.09);
+  }
+
+  .sidebar-collapsed .nav-item {
+    justify-content: center;
+    width: 54px;
+    min-height: 50px;
+    margin: 0 auto 7px;
+    padding: 13px;
+  }
+
+  .sidebar-collapsed .nav-item svg {
+    width: 21px;
+    height: 21px;
+  }
+
+  .sidebar-collapsed .nav-item .count {
+    position: absolute;
+    top: 3px;
+    right: 2px;
+    min-width: 17px;
+    padding: 1px 4px;
+    text-align: center;
+  }
+
+  .sidebar-collapsed .sidebar-bottom {
+    margin-top: auto;
+  }
+
+  .sidebar-collapsed .user-card {
+    justify-content: center;
+    margin-inline: -13px;
+    padding: 13px 8px;
+    gap: 6px;
+  }
+
+  .sidebar-collapsed .user-card form {
+    margin: 0;
+  }
+
+  .sidebar-collapsed .signout-button {
+    width: 32px;
+    padding: 7px;
+    justify-content: center;
+  }
+}
+
 .breadcrumb strong {
   padding: 6px 11px;
   border-radius: 8px;
@@ -1033,6 +1143,10 @@ select.input,
   }
   .main-shell { margin-left: 0; }
   .topbar { height: 68px; padding: 0 16px; }
+  .mobile-toggle {
+    display: inline-flex;
+    margin-right: 8px;
+  }
   .main-content { padding: 20px 14px 55px; }
   .page-heading {
     min-height: 0;
