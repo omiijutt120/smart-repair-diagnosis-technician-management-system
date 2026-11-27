@@ -21,6 +21,37 @@
 </svg>
 {%- endmacro %}
 
+{% macro symptom_visual(label) -%}
+<span class="symptom-visual" aria-hidden="true">
+<svg viewBox="0 0 48 48" role="img">
+  <circle class="symptom-glow" cx="24" cy="24" r="21"/>
+  {% if 'No power' in label %}
+  <path d="M24 10v12m-8-7a13 13 0 1 0 16 0"/>
+  {% elif 'Not charging' in label %}
+  <rect x="12" y="17" width="21" height="15" rx="4"/><path d="M33 22h4v6h-4M24 13l-5 10h6l-3 12"/>
+  {% elif 'Battery drains' in label %}
+  <rect x="10" y="17" width="24" height="15" rx="4"/><path d="M34 22h4v6h-4m-20 0 5-7m0 7 5-7"/>
+  {% elif 'Screen flickers' in label %}
+  <rect x="9" y="10" width="30" height="24" rx="4"/><path d="M17 39h14M14 25l5-6 5 9 5-12 5 9"/>
+  {% elif 'Cracked display' in label %}
+  <rect x="12" y="7" width="24" height="34" rx="5"/><path d="m25 8-4 11 6 3-5 7 4 4-3 8"/>
+  {% elif 'Slow performance' in label %}
+  <path d="M10 32a16 16 0 0 1 28 0M24 32l8-11"/><circle cx="24" cy="32" r="3"/><path d="M13 25h4m14 0h4M24 16v4"/>
+  {% elif 'Overheating' in label %}
+  <path d="M22 11a4 4 0 0 1 8 0v17a8 8 0 1 1-8 0z"/><path d="M26 17v14"/><path d="M10 16h7m-5-5 5 5-5 5"/>
+  {% elif 'Unusual noise' in label %}
+  <path d="M10 20h7l8-7v22l-8-7h-7zM31 19a8 8 0 0 1 0 10m4-14a13 13 0 0 1 0 18"/>
+  {% elif 'Unexpected restart' in label %}
+  <path d="M36 20a14 14 0 1 1-5-7"/><path d="M31 7v8h8"/><path d="M24 18v7l5 3"/>
+  {% elif 'No display' in label %}
+  <rect x="8" y="10" width="32" height="24" rx="4"/><path d="M18 39h12M15 15l18 14m0-14L15 29"/>
+  {% else %}
+  <path d="M16 12h16l6 12-6 12H16L10 24z"/><circle cx="24" cy="24" r="4"/>
+  {% endif %}
+</svg>
+</span>
+{%- endmacro %}
+
 {% macro field(f) -%}
 {% if f.type not in ['CSRFTokenField', 'HiddenField'] %}
 <div class="field {{ 'checkbox-field' if f.type == 'BooleanField' else '' }}">

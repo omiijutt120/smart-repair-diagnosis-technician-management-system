@@ -25,9 +25,69 @@ def own_device(device_id):
 
 def intake_choices(form):
     form.device_id.choices = [(d.id, f"{d.nickname} · {d.model.brand.name} {d.model.model_name}") for d in CustomerDevice.query.filter_by(customer_id=current_user.customer.id, archived_at=None).all()]
+    if isinstance(form, RequestForm):
+        form.device_id.choices.append((-1, "My device is not listed — enter it below"))
+        form.custom_category_id.choices = [(c.id, c.name) for c in DeviceCategory.query.filter_by(is_active=True, archived_at=None).order_by(DeviceCategory.name).all()]
+        form.custom_category_id.choices.append((0, "Other device type"))
     form.symptom_ids.choices = [(s.id, f"{s.category.name} · {s.name}") for s in Symptom.query.filter_by(is_active=True, archived_at=None).all()]
     if hasattr(form, "service_center_id"):
         form.service_center_id.choices = [(c.id, f"{c.name} · {c.city}") for c in ServiceCenter.query.filter_by(is_active=True, archived_at=None).all()]
+
+
+def custom_device_valid(form):
+    if form.device_id.data != -1:
+        return True
+    valid = True
+    for name in ("custom_brand", "custom_model", "custom_nickname"):
+        field = getattr(form, name)
+        value = (field.data or "").strip()
+        if len(value) < 2:
+            field.errors.append("Enter at least 2 characters for this device.")
+            valid = False
+    if form.custom_category_id.data == 0 and len((form.custom_category.data or "").strip()) < 2:
+        form.custom_category.errors.append("Enter a device type with at least 2 characters.")
+        valid = False
+    if form.custom_category_id.data is None:
+        form.custom_category_id.errors.append("Choose a device type.")
+        valid = False
+    return valid
+
+
+def register_custom_device(form):
+    category_id = form.custom_category_id.data
+    if category_id == 0:
+        name = form.custom_category.data.strip()
+        category = DeviceCategory.query.filter(db.func.lower(DeviceCategory.name) == name.lower()).first()
+        if category and (category.archived_at or not category.is_active):
+            raise BusinessError("This device type is currently unavailable. Please contact the service centre.")
+        if not category:
+            category = DeviceCategory(name=name, description="Customer supplied device type")
+            db.session.add(category)
+            db.session.flush()
+        category_id = category.id
+    brand_name = form.custom_brand.data.strip()
+    brand = DeviceBrand.query.filter(db.func.lower(DeviceBrand.name) == brand_name.lower()).first()
+    if brand and (brand.archived_at or not brand.is_active):
+        raise BusinessError("This brand is currently unavailable. Please contact the service centre.")
+    if not brand:
+        brand = DeviceBrand(name=brand_name)
+        db.session.add(brand)
+        db.session.flush()
+    model_name = form.custom_model.data.strip()
+    model = DeviceModel.query.filter(DeviceModel.brand_id == brand.id, db.func.lower(DeviceModel.model_name) == model_name.lower()).first()
+    if model and model.archived_at:
+        raise BusinessError("This model is currently unavailable. Please contact the service centre.")
+    if not model:
+        model = DeviceModel(brand_id=brand.id, category_id=category_id, model_name=model_name)
+        db.session.add(model)
+        db.session.flush()
+    elif model.category_id != category_id:
+        raise BusinessError("This model belongs to a different device type. Choose the matching type.")
+    device = CustomerDevice(customer_id=current_user.customer.id, device_model_id=model.id,
+                            nickname=form.custom_nickname.data.strip())
+    db.session.add(device)
+    db.session.flush()
+    return device
 
 
 @bp.route("/devices", methods=["GET", "POST"])
@@ -119,8 +179,8 @@ def new_request():
     if request.method == "GET" and session.get("diagnosis"):
         saved = session["diagnosis"]
         form.device_id.data, form.symptom_ids.data = saved["device_id"], saved["symptoms"]
-    if form.validate_on_submit():
-        device = own_device(form.device_id.data)
+    if form.validate_on_submit() and custom_device_valid(form):
+        device = register_custom_device(form) if form.device_id.data == -1 else own_device(form.device_id.data)
         validated = validate_upload(form.attachment.data) if form.attachment.data else None
         record = RepairRequest(customer_id=current_user.customer.id, customer_device_id=device.id,
             service_center_id=form.service_center_id.data, request_code=code("SR"),

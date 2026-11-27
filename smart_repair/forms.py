@@ -66,6 +66,12 @@ class DiagnosisForm(FlaskForm):
 
 
 class RequestForm(DiagnosisForm):
+    symptom_ids = SymptomChoices("Symptoms (optional)", coerce=int, validators=[Optional()])
+    custom_category_id = SelectField("Device type", coerce=int, validators=[Optional()])
+    custom_category = StringField("Other device type", validators=[Optional(), Length(max=80)])
+    custom_brand = StringField("Brand", validators=[Optional(), Length(max=80)])
+    custom_model = StringField("Model", validators=[Optional(), Length(max=100)])
+    custom_nickname = StringField("Device name", validators=[Optional(), Length(max=100)])
     service_center_id = SelectField("Service centre", coerce=int, validators=[DataRequired()])
     issue_description = TextAreaField("Tell us about the issue", validators=[DataRequired(), Length(min=10, max=5000)])
     urgency = SelectField("Priority", choices=[("Normal", "Normal"), ("High", "High"), ("Urgent", "Urgent")])

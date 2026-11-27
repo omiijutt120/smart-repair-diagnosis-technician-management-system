@@ -47,3 +47,46 @@ def test_symptom_checkboxes_do_not_require_every_choice(client, login):
     response = client.post("/customer/diagnosis", data={"device_id": 1})
     assert response.status_code == 200
     assert b"Select at least one symptom" in response.data
+
+
+def test_request_accepts_unlisted_device_and_issue_without_listed_symptom(client, login):
+    from smart_repair.extensions import db
+    from smart_repair.models import CustomerDevice, RepairRequest
+
+    login("customer")
+    response = client.post("/customer/requests/new", data={
+        "device_id": -1,
+        "custom_category_id": 0,
+        "custom_category": "Game console",
+        "custom_brand": "ExampleBrand",
+        "custom_model": "Series Z",
+        "custom_nickname": "Living room console",
+        "service_center_id": 1,
+        "issue_description": "It shuts down unexpectedly after a few minutes.",
+        "urgency": "Normal",
+    })
+    assert response.status_code == 302
+    request = RepairRequest.query.order_by(RepairRequest.id.desc()).first()
+    device = db.session.get(CustomerDevice, request.customer_device_id)
+    assert device.nickname == "Living room console"
+    assert device.model.brand.name == "ExampleBrand"
+    assert device.model.category.name == "Game console"
+    assert request.selected_symptoms == "[]"
+    assert request.results[0].rule_id is None
+
+
+def test_unlisted_device_requires_its_details(client, login):
+    from smart_repair.models import RepairRequest
+
+    login("customer")
+    before = RepairRequest.query.count()
+    response = client.post("/customer/requests/new", data={
+        "device_id": -1,
+        "custom_category_id": 0,
+        "service_center_id": 1,
+        "issue_description": "The laptop shuts down without warning.",
+        "urgency": "Normal",
+    })
+    assert response.status_code == 200
+    assert b"Enter at least 2 characters" in response.data
+    assert RepairRequest.query.count() == before
